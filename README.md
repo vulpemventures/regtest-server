@@ -2,8 +2,8 @@
 
 This repo contains a Go implementation of a web server exposing the following endpoints to interact with the underline cluster of bitcoin daemons in regtest mode:
 
-* `send/:address` sends funds to the target address
-* `broadcast/:tx` publishes the passed raw tx to the regtest network
+* `send/:address` sends funds to the target address and returns the transaction hash
+* `broadcast/:tx` publishes the passed raw tx to the regtest network and returns the transaction hash
 * `utxos/:address` returns all **unspent** transaction output related to the target address [WIP]
 
 It uses [bitcoin-testnet-box](https://github.com/freewil/bitcoin-testnet-box/) with [Docker](https://docker.io) to start the daemons.
@@ -52,3 +52,5 @@ make stop
 make clean
 exit
 ```
+
+## Endpoint responses
