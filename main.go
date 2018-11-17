@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/altafan/regtest-server/router"
+	"github.com/vulpemventures/regtest-server/router"
 )
 
 func main() {
