@@ -64,9 +64,6 @@ func (r *RegTest) New() error {
 	r.Client = client
 	r.DB = db
 
-	// Since regtest chain should be empty at this point, lets mine some blocks to increase miner balance
-	mine(r, 200)
-
 	return nil
 }
 
@@ -78,6 +75,11 @@ func (r *RegTest) Shutdown() {
 
 type txResponse struct {
 	TxHash string `json:"tx_hash"`
+}
+
+// Mine generates `num` new blocks
+func (r *RegTest) Mine(num int) ([]*chainhash.Hash, error) {
+	return r.Client.Generate(uint32(num))
 }
 
 // SendTo sends 1 btc to the given address from the miner account (faucet service)
@@ -204,10 +206,6 @@ func (r *RegTest) EstimateFees(w http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(w).Encode(fees)
 }
 
-func mine(r *RegTest, num int) ([]*chainhash.Hash, error) {
-	return r.Client.Generate(uint32(num))
-}
-
 func sendTo(r *RegTest, address string) (*chainhash.Hash, *chainhash.Hash, error) {
 	receiver, err := btcutil.DecodeAddress(address, &chaincfg.RegressionNetParams)
 	if err != nil {
@@ -218,7 +216,7 @@ func sendTo(r *RegTest, address string) (*chainhash.Hash, *chainhash.Hash, error
 		return nil, nil, err
 	}
 
-	blockHash, err := mine(r, 1)
+	blockHash, err := r.Mine(1)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -238,7 +236,7 @@ func broadcast(r *RegTest, tx []byte) (*chainhash.Hash, *chainhash.Hash, error) 
 		return nil, nil, err
 	}
 
-	blockHash, err := mine(r, 1)
+	blockHash, err := r.Mine(1)
 	if err != nil {
 		return nil, nil, err
 	}
