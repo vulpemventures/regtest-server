@@ -17,6 +17,8 @@ func New(client *RegTest) *Router {
 
 	r.HandleFunc("/send/{address}", r.RegTestClient.SendTo)
 	r.HandleFunc("/broadcast/{tx}", r.RegTestClient.Broadcast)
+	r.HandleFunc("/utxos/{address}", r.RegTestClient.GetUtxos)
+	r.HandleFunc("/fees", r.RegTestClient.EstimateFees)
 
 	return r
 }
