@@ -82,6 +82,17 @@ func (r *RegTest) Mine(num int) ([]*chainhash.Hash, error) {
 	return r.Client.Generate(uint32(num))
 }
 
+// Ping is used as health check endpoint
+func (r *RegTest) Ping(w http.ResponseWriter, req *http.Request) {
+	resp, err := ping(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(resp)
+}
+
 // SendTo sends 1 btc to the given address from the miner account (faucet service)
 // Here the db is updated adding the new utxo to the "unpent" bucket
 func (r *RegTest) SendTo(w http.ResponseWriter, req *http.Request) {
@@ -204,6 +215,10 @@ func (r *RegTest) EstimateFees(w http.ResponseWriter, req *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(fees)
+}
+
+func ping(r *RegTest) (*btcjson.GetBlockChainInfoResult, error) {
+	return r.Client.GetBlockChainInfo()
 }
 
 func sendTo(r *RegTest, address string) (*chainhash.Hash, *chainhash.Hash, error) {

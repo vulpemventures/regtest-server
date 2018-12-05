@@ -19,6 +19,7 @@ func New(client *RegTest) *Router {
 	r.HandleFunc("/broadcast/{tx}", r.RegTestClient.Broadcast)
 	r.HandleFunc("/utxos/{address}", r.RegTestClient.GetUtxos)
 	r.HandleFunc("/fees", r.RegTestClient.EstimateFees)
+	r.HandleFunc("/ping", r.RegTestClient.Ping)
 
 	return r
 }
