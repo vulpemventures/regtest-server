@@ -44,3 +44,9 @@
 [prune]
   go-tests = true
   unused-packages = true
+
+[metadata.heroku]
+  root-package = "github.com/vulpemventures/regtest-server/regtest"
+  go-version = "1.11.2"
+  install = [ "./..." ]
+  ensure = true

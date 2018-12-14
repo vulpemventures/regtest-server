@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"flag"
 	"fmt"
 	"math"
 	"net/http"
@@ -23,10 +24,10 @@ import (
 	"github.com/btcsuite/btcutil"
 )
 
-const (
-	host     = "localhost:19001"
-	user     = "admin1"
-	password = "123"
+var (
+	host     = flag.String("HOST", "localhost:19001", "Host of Bitcoind instance")
+	user     = flag.String("RPC_USER", "admin1", "Bitcoind RPC user")
+	password = flag.String("RPC_PASSWORD", "123", "Bitcoind RPC password")
 )
 
 // RegTest handles communication with both the regtest daemon and the local database
@@ -44,9 +45,9 @@ func (r *RegTest) New() error {
 	connConfig := &rpcclient.ConnConfig{
 		HTTPPostMode: true,
 		DisableTLS:   true,
-		Host:         host,
-		User:         user,
-		Pass:         password,
+		Host:         *host,
+		User:         *user,
+		Pass:         *password,
 	}
 
 	client, err := rpcclient.New(connConfig, nil)
@@ -422,7 +423,7 @@ func marshalUtxo(v btcjson.Vout, hash string, blockHash string) ([]byte, error) 
 }
 
 func getEstimationRequestParams() (string, map[string]string, string) {
-	url := fmt.Sprintf("http://%s:%s@%s", user, password, host)
+	url := fmt.Sprintf("http://%s:%s@%s", *user, *password, *host)
 	header := map[string]string{"Content-Type": "application/json"}
 	body := `{"jsonrpc": "1.0", "id": "2", "method": "getnetworkinfo", "params": []}`
 
