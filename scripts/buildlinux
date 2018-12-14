@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -ex
+
+PARENT_PATH=$(dirname $(cd $(dirname $0); pwd -P))
+
+pushd $PARENT_PATH
+mkdir -p build
+docker build --no-cache -t regtest-server-linux-amd64:latest resources/linuxbuild
+docker run --name linux-build regtest-server-linux-amd64:latest
+docker cp linux-build:/go/src/github.com/vulpemventures/regtest-server/build/regtest-server-linux-amd64 ./build
+docker rm linux-build
+docker rmi regtest-server-linux-amd64:latest
+popd
