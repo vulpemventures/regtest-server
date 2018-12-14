@@ -6,51 +6,57 @@ This repo contains a Go implementation of a web server exposing the following en
 * `broadcast/:tx` publishes the passed raw tx to the regtest network and returns the transaction hash
 * `utxos/:address` returns all **unspent** transaction output related to the target address [WIP]
 
-It uses [bitcoin-testnet-box](https://github.com/freewil/bitcoin-testnet-box/) with [Docker](https://docker.io) to start the daemons.
+It uses [bitcoin-testnet-box](https://github.com/vulpemventures/bitcoin-testnet-box/) fork.
 
-## Install
+You can use [Docker](https://docker.io) to start a cluster of bitcoin daemons or a linux installer bash script [here](https://github.com/vulpemventures/regtest-server/scripts/insall-bitcoin)
 
-Clone repo
+## Clone
+
+Bitcoin cluster
 
 ```sh
-git clone git@github.com:vulpemventures/regtest-server.git
-cd regtest-server
+git clone https://github.com/vulpemventures/bitcoin-testnet-box.git
 ```
 
-Install dependencies and run
+Regtest server
 
 ```sh
-go get -d
-./scripts/install_docker.sh
+git clone https://github.com/vulpemventures/regtest-server.git
 ```
 
-## Run regtest
+## Run bitcoin cluster
 
-Start daemon
+Enter `bitcoin-testnet-box` folder and run
 
 ```sh
-./scripts/run_server.sh
 make start
 ```
+
+
+## Build regtest server
+
+Enter `regtest-server` folder
+
+```sh
+./scripts/buildlinux
+```
+
 
 Start server in another tab
 
 ```sh
-go build
 # run server at http://localhost:8000/
-./regtest-server
+./build/regtest-server-linux-amd64
 # or specify url
-ADDRESS=192.168.0.20 PORT=8001 ./regtest-server
+ADDRESS=192.168.0.20 PORT=8001 ./build/regtest-server-linux-amd64
 ```
 
-## Stop regtest
+## Stop
 
-In the regtest tab run
+In the `bitcoin-testnet-box` folder run
 
 ```sh
 make stop
 make clean
 exit
 ```
-
-## Endpoint responses
