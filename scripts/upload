@@ -1,0 +1,8 @@
+#!/bin/bash
+
+echo "Enter host"
+read HOST
+echo "Enter username"
+read USER 
+scp build/regtest-server-linux-amd64 $USER@$HOST:regtest-server-linux-amd64
+echo "Upload succesfull!"
