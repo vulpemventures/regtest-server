@@ -56,5 +56,5 @@ func validPort(val int) bool {
 	return val > 0 && val < math.MaxUint16
 }
 func validAddress(val string) bool {
-	return val == "localhost" || regexp.MustCompile(`^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]$`).MatchString(val)
+	return val == "localhost" || regexp.MustCompile(`^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]`).MatchString(val)
 }

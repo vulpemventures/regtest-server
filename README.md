@@ -8,7 +8,7 @@ This repo contains a Go implementation of a web server exposing the following en
 
 It uses [bitcoin-testnet-box](https://github.com/vulpemventures/bitcoin-testnet-box/) fork.
 
-You can use [Docker](https://docker.io) to start a cluster of bitcoin daemons or a linux installer bash script [here](https://github.com/vulpemventures/regtest-server/scripts/insall-bitcoin)
+You can use [Docker](https://docker.io) to start a cluster of bitcoin daemons or a linux installer bash script [here](https://github.com/vulpemventures/regtest-server/blob/master/scripts/install-bitcoin)
 
 ## Clone
 
