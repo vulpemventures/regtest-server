@@ -7,6 +7,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"math"
 	"net/http"
 	"strconv"
@@ -93,8 +94,10 @@ func (r *RegTest) Ping(w http.ResponseWriter, req *http.Request) {
 // SendTo sends 1 btc to the given address from the miner account (faucet service)
 // Here the db is updated adding the new utxo to the "unpent" bucket
 func (r *RegTest) SendTo(w http.ResponseWriter, req *http.Request) {
-	// send request through regtest client
-	address := mux.Vars(req)["address"]
+	body := getRequestBody(req.Body)
+	address := body["address"]
+
+	// send request to regtest client
 	txHash, blockHash, err := sendTo(r, address)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -123,7 +126,9 @@ func (r *RegTest) SendTo(w http.ResponseWriter, req *http.Request) {
 // - for each input, move the corresponding entry from the "unpent" bucket to the "spent" one
 // - for each output, create an entry in the "unspent" bucket
 func (r *RegTest) Broadcast(w http.ResponseWriter, req *http.Request) {
-	tx := mux.Vars(req)["tx"]
+	body := getRequestBody(req.Body)
+	tx := body["tx"]
+
 	rawTx, err := hex.DecodeString(tx)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -456,4 +461,12 @@ func getEstimationRequestParams() (string, map[string]string, string) {
 	body := `{"jsonrpc": "1.0", "id": "2", "method": "getnetworkinfo", "params": []}`
 
 	return url, header, body
+}
+
+func getRequestBody(body io.ReadCloser) map[string]string {
+	decoder := json.NewDecoder(body)
+	var decodedBody map[string]string
+	decoder.Decode(&decodedBody)
+
+	return decodedBody
 }
