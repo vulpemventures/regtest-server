@@ -12,16 +12,12 @@ import (
 	"strconv"
 
 	"github.com/btcsuite/btcd/btcjson"
-
-	"github.com/btcsuite/btcd/wire"
-
-	"github.com/btcsuite/btcd/chaincfg/chainhash"
-	"github.com/gorilla/mux"
-
 	"github.com/btcsuite/btcd/chaincfg"
-
+	"github.com/btcsuite/btcd/chaincfg/chainhash"
 	"github.com/btcsuite/btcd/rpcclient"
+	"github.com/btcsuite/btcd/wire"
 	"github.com/btcsuite/btcutil"
+	"github.com/gorilla/mux"
 )
 
 var (
@@ -218,6 +214,24 @@ func (r *RegTest) EstimateFees(w http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(w).Encode(fees)
 }
 
+// GetTx returns the json object of the transaction identified by the hash
+func (r *RegTest) GetTx(w http.ResponseWriter, req *http.Request) {
+	hash := mux.Vars(req)["hash"]
+	txHash, err := chainhash.NewHashFromStr(hash)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	tx, err := decodeTx(r, txHash)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(tx)
+}
+
 func ping(r *RegTest) (*btcjson.GetBlockChainInfoResult, error) {
 	return r.Client.GetBlockChainInfo()
 }
@@ -292,6 +306,13 @@ func estimateFees() (*estimateFeeResponse, error) {
 	return &estimateFeeResponse{fee, fee, fee}, nil
 }
 
+type transaction struct {
+	BlockHash string `json:"blockHash"`
+	LockTime  uint32 `json:"lockTime"`
+	Version   int32  `json:"version"`
+	Hex       string `json:"hex"`
+}
+
 // decodeTx takes a tx hash and returns the decoded tx object
 func decodeTx(r *RegTest, txHash *chainhash.Hash) (*btcjson.TxRawResult, error) {
 	rawTx, err := r.Client.GetRawTransaction(txHash)
@@ -305,7 +326,14 @@ func decodeTx(r *RegTest, txHash *chainhash.Hash) (*btcjson.TxRawResult, error) 
 		return nil, err
 	}
 
-	return r.Client.DecodeRawTransaction(buf.Bytes())
+	// add missing hex field before returning
+	tx, err := r.Client.DecodeRawTransaction(buf.Bytes())
+	if err != nil {
+		return nil, err
+	}
+	tx.Hex = hex.EncodeToString(buf.Bytes())
+
+	return tx, nil
 }
 
 // prepareUtxo takes a tx object, finds the utxo of to the given address in the tx outputs
