@@ -19,12 +19,6 @@ func main() {
 	}
 	defer client.Shutdown()
 
-	// Mine some blocks to enable faucet service
-	_, err = client.Mine(200)
-	if err != nil {
-		log.Println("Warning: an error occured when mining blocks, please check the following error and manually mine at least 100 blocks to enable faucet service.\n", err)
-	}
-
 	r := router.New(client)
 
 	log.Println("Starting server at " + config.Address + ":" + config.Port)
