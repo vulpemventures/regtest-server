@@ -7,3 +7,15 @@ sudo apt-get install --yes software-properties-common
 sudo add-apt-repository --yes ppa:bitcoin/bitcoin 
 sudo apt-get update
 sudo apt-get install --yes bitcoind make
+
+# Install Liquid
+mkdir -p downloads
+
+cd downloads
+wget https://github.com/Blockstream/liquid/releases/download/liquid.3.14.1.22/liquid-3.14.1.22-x86_64-linux-gnu.tar.gz
+tar xvf liquid-3.14.1.22-x86_64-linux-gnu.tar.gz
+mv liquid-3.14.1.22-x86_64-linux-gnu/bin/liquidd /usr/bin/liquidd
+mv liquid-3.14.1.22-x86_64-linux-gnu/bin/liquid-cli /usr/bin/liquid-cli
+cd ..
+rm -rf downloads
+
