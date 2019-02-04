@@ -12,14 +12,22 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	client := &router.RegTest{}
-	err = client.New()
+	bitcoinClient := &router.RegTest{}
+	err = bitcoinClient.New()
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer client.Shutdown()
+	defer bitcoinClient.Shutdown()
 
-	r := router.New(client)
+	liquidClient := &router.Liquid{}
+	err = liquidClient.New()
+	if err != nil {
+		log.Fatal(err)
+	}
+	/**
+	** Start new JSON HTTP/1 router
+	 */
+	r := router.New(bitcoinClient, liquidClient)
 
 	log.Println("Starting server at " + config.Address + ":" + config.Port)
 	if err = http.ListenAndServe(config.Address+":"+config.Port, r); err != nil {
